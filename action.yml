@@ -1,0 +1,17 @@
+name: 'DokuWiki Plugin Test Action'
+description: 'Run tests for DokuWiki plugins'
+inputs:
+  branch:
+    description: 'The DokuWiki branch to test against'
+    required: true
+    default: 'master'
+outputs:
+  type:
+    description: 'The type of extension this is (plugin or template)'
+  base:
+    description: 'The base name of the extension'
+  dir:
+    description: 'The full directory name of the extension (lib/plugins/<base> or lib/tpl/<base>)'
+runs:
+  using: 'node16'
+  main: 'index.js'
