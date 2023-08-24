@@ -43,4 +43,4 @@ jobs:
       - name: Run PHPUnit
         run: |
           cd _test
-          php phpunit.phar --verbose --stderr --group plugin_${{ steps.dokuwiki-env.outputs.base }}
+          php phpunit.phar --verbose --stderr --group ${{ steps.dokuwiki-env.outputs.type }}_${{ steps.dokuwiki-env.outputs.base }}
