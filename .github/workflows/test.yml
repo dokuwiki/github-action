@@ -1,0 +1,46 @@
+name: Run Extension Unit Tests
+
+on: [ workflow_call ]
+
+jobs:
+  test:
+    name: PHP ${{ matrix.php-versions }} DokuWiki ${{ matrix.dokuwiki-branch }}
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+
+    strategy:
+      matrix:
+        php-versions: [ '7.4', '8.0', '8.1', '8.2' ]
+        dokuwiki-branch: [ 'master', 'stable' ]
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, intl, PDO, pdo_sqlite, bz2
+
+      - name: Setup problem matchers
+        run: |
+          echo ::add-matcher::${{ runner.tool_cache }}/php.json
+          echo ::add-matcher::${{ runner.tool_cache }}/phpunit.json
+
+      - name: Create DokuWiki Environment
+        id: dokuwiki-env
+        uses: splitbrain/dokuwiki-gh-action
+        with:
+          branch: ${{ matrix.dokuwiki-branch }}
+
+      - name: Setup PHPUnit
+        run: |
+          php _test/fetchphpunit.php
+          cd _test
+
+      - name: Run PHPUnit
+        run: |
+          cd _test
+          php phpunit.phar --verbose --stderr --group plugin_${{ steps.dokuwiki-env.outputs.base }}
