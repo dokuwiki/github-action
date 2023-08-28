@@ -1,0 +1,13 @@
+name: Run all extension tasks
+
+on: workflow_call
+
+jobs:
+  test-master:
+    uses: ./.github/workflows/test.yml
+    with:
+        matrix-json: '{"php-version": ["7.4", "8.0", "8.1", "8.2"], "dokuwiki-branch": ["master"]}'
+  test-stable:
+    uses: ./.github/workflows/test.yml
+    with:
+      matrix-json: '{"php-version": ["7.2", "7.3", "7.4", "8.0", "8.1", "8.2"], "dokuwiki-branch": ["stable"]}'

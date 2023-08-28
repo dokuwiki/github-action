@@ -4,7 +4,7 @@ Note: this is currently a work in progress. Next steps are:
 
 * [ ] Move to dokuwiki organization
 * [ ] Add support for phpcs
-* [ ] Have a single workflow that runs all the other workflows
+* [x] Have a single workflow that runs all the other workflows
 * [ ] Improve the matrix (different php versions for different branches)
 * [ ] Figure out if we can make the matrix overridable
 * [ ] Implement and test it in a couple of extensions
@@ -42,12 +42,12 @@ The workflows defined in this repository are designed to be reusable for any Dok
 Simply create a `.github/workflows/dokuwiki.yml` file with the following contents in your extension repository and all standard tooling will be run on every push and on pull requests.
 
 ```
-name: DokuWiki Default Jobs
+name: DokuWiki Default Tasks
 on: [push, pull_request]
 
 jobs:
-    Unit Tests:
-        uses: splitbrain/dokuwiki-gh-action/.github/workflows/test.yml@main
+    All Tasks:
+        uses: splitbrain/dokuwiki-gh-action/.github/workflows/all.yml@main
 ```
 
 

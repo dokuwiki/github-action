@@ -1,6 +1,13 @@
 name: Run Extension Unit Tests
 
-on: [ workflow_call ]
+on:
+  workflow_call:
+    inputs:
+      matrix-json:
+        description: 'The matrix configuration as JSON. Need to supply arrays `php-version` and `dokuwiki-branch`.'
+        required: true
+        type: string
+        default: '{"php-version": ["7.4", "8.0", "8.1", "8.2"], "dokuwiki-branch": ["master", "stable"]}'
 
 jobs:
   test:
@@ -9,9 +16,7 @@ jobs:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
     strategy:
-      matrix:
-        php-versions: [ '7.4', '8.0', '8.1', '8.2' ]
-        dokuwiki-branch: [ 'master', 'stable' ]
+      matrix: ${{ fromJson(inputs.matrix-json) }}
       fail-fast: false
 
     steps:
@@ -21,7 +26,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: ${{ matrix.php-version }}
           extensions: mbstring, intl, PDO, pdo_sqlite, bz2
 
       - name: Setup problem matchers
