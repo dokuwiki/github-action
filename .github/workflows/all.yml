@@ -8,7 +8,7 @@ jobs:
   test-master:
     uses: ./.github/workflows/test.yml
     with:
-        matrix-json: '{"php-version": ["7.4", "8.0", "8.1", "8.2"], "dokuwiki-branch": ["master"]}'
+      matrix-json: '{"php-version": ["7.4", "8.0", "8.1", "8.2"], "dokuwiki-branch": ["master"]}'
   test-stable:
     uses: ./.github/workflows/test.yml
     with:

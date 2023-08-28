@@ -1,18 +1,12 @@
 # Github Action and Workflows for DokuWiki Extension Development
 
-Note: this is currently a work in progress. Next steps are:
+This repository contains a Github Action and reusable workflows for DokuWiki Extension Development.
 
-* [ ] Move to dokuwiki organization
-* [x] Add support for phpcs
-* [x] Have a single workflow that runs all the other workflows
-* [x] Improve the matrix (different php versions for different branches)
-* [x] Figure out if we can make the matrix overridable
-* [ ] Implement and test it in a couple of extensions
+By simply reusing the provided standard workflow, extension developer always have an up-to-date toolchain for their development. This includes:
 
-
-This repository contains a Github Action and Workflows for DokuWiki Extension Development.
-
-The idea is to have a central place to define which PHP versions should be tested against and easily provide new tooling for extension developer without them having to update all their plugins and templates for workflow changes.
+* correct PHP versions for unit testing against DokuWiki stable and master
+* code style checks
+* improvements to the toolchain are automatically applied to all extensions using the workflow 
 
 ## Github Action
 
@@ -46,8 +40,8 @@ name: DokuWiki Default Tasks
 on: [push, pull_request]
 
 jobs:
-    all:
-        uses: splitbrain/dokuwiki-gh-action/.github/workflows/all.yml@main
+  all:
+    uses: dokuwiki/github-action/.github/workflows/all.yml@main
 ```
 
 
