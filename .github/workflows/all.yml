@@ -3,6 +3,8 @@ name: Run all extension tasks
 on: workflow_call
 
 jobs:
+  code-style:
+    uses: ./.github/workflows/cs.yml
   test-master:
     uses: ./.github/workflows/test.yml
     with:

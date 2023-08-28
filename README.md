@@ -3,10 +3,10 @@
 Note: this is currently a work in progress. Next steps are:
 
 * [ ] Move to dokuwiki organization
-* [ ] Add support for phpcs
+* [x] Add support for phpcs
 * [x] Have a single workflow that runs all the other workflows
-* [ ] Improve the matrix (different php versions for different branches)
-* [ ] Figure out if we can make the matrix overridable
+* [x] Improve the matrix (different php versions for different branches)
+* [x] Figure out if we can make the matrix overridable
 * [ ] Implement and test it in a couple of extensions
 
 
@@ -46,7 +46,7 @@ name: DokuWiki Default Tasks
 on: [push, pull_request]
 
 jobs:
-    All Tasks:
+    all:
         uses: splitbrain/dokuwiki-gh-action/.github/workflows/all.yml@main
 ```
 
