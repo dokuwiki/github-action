@@ -1,14 +1,14 @@
-# Github Action and Workflows for DokuWiki Extension Development
+# GitHub Action and Workflows for DokuWiki Extension Development
 
-This repository contains a Github Action and reusable workflows for DokuWiki Extension Development.
+This repository contains a GitHub Action and reusable workflows for DokuWiki Extension Development.
 
 By simply reusing the provided standard workflow, extension developer always have an up-to-date toolchain for their development. This includes:
 
 * correct PHP versions for unit testing against DokuWiki stable and master
 * code style checks
-* improvements to the toolchain are automatically applied to all extensions using the workflow 
+* improvements to the toolchain are automatically applied to all extensions using the workflow
 
-## Github Action
+## GitHub Action
 
 The action defined in this repository will run the following steps:
 
@@ -33,11 +33,15 @@ The action is used in the reusable workflows defined in this repository.
 
 The workflows defined in this repository are designed to be reusable for any DokuWiki extension. They are designed to be used in a repository that contains a single DokuWiki extension.
 
-Simply create a `.github/workflows/dokuwiki.yml` file with the following contents in your extension repository and all standard tooling will be run on every push and on pull requests.
+Simply create a `.github/workflows/dokuwiki.yml` file with the following contents in your extension repository and all standard tooling will be run on every push and on pull requests. It will also run once a month to check for updates to the toolchain and DokuWiki updates.
 
 ```
 name: DokuWiki Default Tasks
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 5 1 * *' # run on the first of every month at 5am UTC
 
 jobs:
   all:
