@@ -25,4 +25,4 @@ jobs:
           branch: master
 
       - name: Run PHP codesniffer
-        run: phpcs -q  --standard=_test/phpcs.xml --report=checkstyle ${{ steps.dokuwiki-env.outputs.dir }} | cs2pr --prepend-source
+        run: phpcs -q  --standard=_test/phpcs.xml --report=checkstyle ${{ steps.dokuwiki-env.outputs.dir }} | cs2pr --prepend-filename
