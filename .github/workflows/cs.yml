@@ -16,7 +16,7 @@ jobs:
         with:
           php-version: 8.2
           extensions: mbstring, intl, PDO, pdo_sqlite, bz2
-          tools: cs2pr, phpcs
+          tools: phpcs
 
       - name: Create DokuWiki Environment
         id: dokuwiki-env
@@ -25,4 +25,4 @@ jobs:
           branch: master
 
       - name: Run PHP codesniffer
-        run: phpcs -q  --standard=_test/phpcs.xml --report=checkstyle ${{ steps.dokuwiki-env.outputs.dir }} | cs2pr --prepend-filename
+        run: phpcs -q  --standard=_test/phpcs.xml ${{ steps.dokuwiki-env.outputs.dir }}
