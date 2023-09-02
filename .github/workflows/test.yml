@@ -13,7 +13,7 @@ permissions: {}
 
 jobs:
   test:
-    name: PHP ${{ matrix.php-versions }} DokuWiki ${{ matrix.dokuwiki-branch }}
+    name: PHP ${{ matrix.php-version }} DokuWiki ${{ matrix.dokuwiki-branch }}
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
