@@ -9,6 +9,8 @@ on:
         type: string
         default: '{"php-version": ["7.4", "8.0", "8.1", "8.2"], "dokuwiki-branch": ["master", "stable"]}'
 
+permissions: {}
+
 jobs:
   test:
     name: PHP ${{ matrix.php-versions }} DokuWiki ${{ matrix.dokuwiki-branch }}

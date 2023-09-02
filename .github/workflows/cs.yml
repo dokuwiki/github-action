@@ -2,6 +2,8 @@ name: PHP Code Style
 
 on: [ workflow_call ]
 
+permissions: {}
+
 jobs:
   phpcs:
     name: PHP CodeSniffer

@@ -1,0 +1,64 @@
+name: Automatic Code Style Fixing
+
+on:
+  workflow_call:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  autofix:
+    name: Automatic Code Style Fixing
+    runs-on: ubuntu-latest
+    if: |
+      contains(fromJSON('["refs/heads/master", "refs/heads/main", "refs/heads/devel"]'), github.ref) &&
+      ( github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository )
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, intl, PDO, pdo_sqlite, bz2
+          tools: phpcbf, rector
+
+      - name: Create DokuWiki Environment
+        id: dokuwiki-env
+        uses: splitbrain/dokuwiki-gh-action@main
+        with:
+          branch: master
+
+      - name: Run Rector
+        run: rector process --config _test/rector.php --no-diffs ${{ steps.dokuwiki-env.outputs.dir }}
+
+      - name: Run PHP CodeSniffer AutoFixing
+        continue-on-error: true # even if not all errors are fixed, we want to create a PR
+        run: phpcbf --standard=_test/phpcs.xml ${{ steps.dokuwiki-env.outputs.dir }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          path: ${{ steps.dokuwiki-env.outputs.dir }}
+          commit-message: "🤖 Automatic code style fixes"
+          title: "🤖 Automatic code style fixes"
+          body: |
+            These changes were made automatically by running [rector](https://getrector.com/) and [phpcbf](https://phpqa.io/projects/phpcbf.html).
+
+            These tools try to ensure that your Extension's code adheres to DokuWiki's coding standards. They also try to fix common issues with newer PHP versions and replace deprecated code. 
+
+            Please carefully check the changes before merging. Please note that unit tests are not run for automated pull requests - so if in doubt, manually test the branch before merging.
+
+            If you disagree with the changes, simply clean the code yourself. This PR automatically closes when no more changes are suggested by rector and phpcbf.
+          delete-branch: true
+          branch: "bot/autofix"
+
+      - name: Give Failure Feedback
+        if: ${{ failure() }}
+        run: |
+          echo "Automatic creation of a pull request failed. Probably because the needed permission is missing."
+          echo "Nonetheless, changes should have been submitted to the branch 'bot/autofix' so you can create your own PR."
+          echo "Please read https://github.com/dokuwiki/github-action#Permissions for more information on how to fix this error."
+          exit 1
