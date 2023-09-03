@@ -44,6 +44,10 @@ If you're uncomfortable with giving blanket write permissions, you can also manu
 
 **Important:** to be able to create Pull Requests, an additional setting has to be enabled in the Web UI of your repository. You'll find it under `Settings` -> `Actions` -> `General` -> `Allow GitHub Actions to create and approve pull requests`. For organizations, this setting can be enabled globally for the whole organization. 
 
+## Issues
+
+If you run into issues with the workflows defined in this repository, please [open a bug report](https://github.com/dokuwiki/github-action/issues). Please be sure to include all necessary log output.
+
 ## Devel Details
 
 ### test.yml
