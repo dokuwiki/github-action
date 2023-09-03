@@ -32,6 +32,8 @@ jobs:
           branch: master
 
       - name: Run Rector
+        env:
+          RECTOR_MIN_PHP: 7.2
         run: rector process --config _test/rector.php --no-diffs ${{ steps.dokuwiki-env.outputs.dir }}
 
       - name: Run PHP CodeSniffer AutoFixing
