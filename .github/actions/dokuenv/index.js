@@ -2,43 +2,7 @@ const core = require('@actions/core');
 const process = require('child_process');
 const fs = require('fs');
 const path = require('path');
-
-/**
- * Detects if we are in a plugin or template repo and returns the target directory
- *
- * @returns {string}
- */
-function getTargetDir() {
-    let type = '';
-    let dir = '';
-    let info = '';
-    if (fs.existsSync('plugin.info.txt')) {
-        type = 'plugin';
-        dir = 'plugins';
-        info = 'plugin.info.txt';
-    } else if (fs.existsSync('template.info.txt')) {
-        type = 'template';
-        dir = 'tpl';
-        info = 'template.info.txt';
-    } else {
-        throw new Error('No plugin.info.txt or template.info.txt found!');
-    }
-
-    const data = fs.readFileSync(info, 'utf8');
-    const lines = data.split('\n');
-    const baseLine = lines.find(line => line.trim().startsWith('base'));
-    if (!baseLine) {
-        throw new Error('No base found in info file!');
-    }
-    const [, base] = baseLine.split(/\s+/);
-    const targetDir = `lib/${dir}/${base}`;
-
-    core.setOutput('type', type);
-    core.setOutput('dir', targetDir);
-    core.setOutput('base', base);
-
-    return targetDir;
-}
+const dwUtils = require('../dokuwikiUtils');
 
 /**
  * Moves all contents of a directory to another directory
@@ -71,7 +35,7 @@ function moveContents(sourceDir, destinationDir) {
 }
 
 /**
- * Installs additional plugin from requirements.txt if it exists
+ * Installs additional plugins from requirements.txt if it exists
  */
 function installRequirements(dir) {
     if (!fs.existsSync(`${dir}/requirements.txt`)) {
@@ -95,17 +59,24 @@ function installRequirements(dir) {
 
 async function main() {
     const branch = core.getInput('branch', {required: true});
-    const targetDir = getTargetDir();
+    const config = dwUtils.loadExtensionInfo();
 
-    console.log(`Moving plugin to ${targetDir}...`);
-    moveContents('.', targetDir);
+    console.log(`Moving plugin to ${config.dir}...`);
+    moveContents('.', config.dir);
 
     // checkout DokuWiki into current directory (no clone because dir isn't empty)
     console.log(`Cloning DokuWiki ${branch}...`);
     process.execFileSync('git', ['init']);
     process.execFileSync('git', ['pull', 'https://github.com/dokuwiki/dokuwiki.git', branch]);
 
-    installRequirements(targetDir);
+    installRequirements(config.dir);
+
+    // set outputs
+    core.setOutput('type', config.type);
+    core.setOutput('dir', config.dir);
+    core.setOutput('base', config.base);
+    core.setOutput('minphp', config.minphp);
+    core.setOutput('maxphp', config.maxphp);
 }
 
 

@@ -1,5 +1,5 @@
-name: 'DokuWiki Plugin Test Action'
-description: 'Run tests for DokuWiki plugins'
+name: 'DokuWiki Environment creator'
+description: 'Install DokuWiki environment for plugin testing'
 inputs:
   branch:
     description: 'The DokuWiki branch to test against'
@@ -12,6 +12,10 @@ outputs:
     description: 'The base name of the extension'
   dir:
     description: 'The full directory name of the extension (lib/plugins/<base> or lib/tpl/<base>)'
+  minphp:
+    description: 'The minimum PHP version required by the extension, if set. Otherwise empty.'
+  maxphp:
+    description: 'The maximum PHP version compatible with the extension, if set. Otherwise empty.'
 runs:
   using: 'node16'
   main: 'index.js'

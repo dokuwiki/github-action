@@ -1,0 +1,12 @@
+name: 'Create PHP Test Matrix'
+description: 'Creates the list of PHP versions and DokuWiki branches to test against'
+outputs:
+  stable_matrix:
+    description: 'The matrix for the stable branch'
+  master_matrix:
+    description: 'The matrix for the master branch'
+  minphp:
+    description: 'The minimum PHP version supported'
+runs:
+  using: 'node16'
+  main: 'index.js'
