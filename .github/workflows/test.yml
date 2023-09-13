@@ -38,7 +38,7 @@ jobs:
 
       - name: Create DokuWiki Environment
         id: dokuwiki-env
-        uses: splitbrain/dokuwiki-gh-action@main
+        uses: dokuwiki/github-action/.github/actions/dokuenv@main
         with:
           branch: ${{ matrix.dokuwiki-branch }}
 

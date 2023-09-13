@@ -4,15 +4,26 @@ on:
   workflow_call:
 
 jobs:
+  create-matrix:
+    uses: ./.github/workflows/matrix.yml
+
+  test-master:
+    needs: create-matrix
+    uses: ./.github/workflows/test.yml
+    with:
+      matrix-json: ${{ needs.create-matrix.outputs.master_matrix }}
+
+  test-stable:
+    needs: create-matrix
+    uses: ./.github/workflows/test.yml
+    with:
+      matrix-json: ${{ needs.create-matrix.outputs.stable_matrix }}
+
   code-style:
     uses: ./.github/workflows/cs.yml
-  test-master:
-    uses: ./.github/workflows/test.yml
-    with:
-      matrix-json: '{"php-version": ["7.4", "8.0", "8.1", "8.2"], "dokuwiki-branch": ["master"]}'
-  test-stable:
-    uses: ./.github/workflows/test.yml
-    with:
-      matrix-json: '{"php-version": ["7.2", "7.3", "7.4", "8.0", "8.1", "8.2"], "dokuwiki-branch": ["stable"]}'
+
   auto-fix:
+    needs: create-matrix
     uses: ./.github/workflows/autofix.yml
+    with:
+      rector-php: ${{ needs.create-matrix.outputs.minphp }}

@@ -1,6 +1,6 @@
 # GitHub Workflows for DokuWiki Extension Development
 
-This repository contains a GitHub Action and reusable workflows for DokuWiki Extension Development.
+This repository contains GitHub Actions and reusable workflows for DokuWiki Extension Development.
 
 By simply reusing the provided standard workflow, extension developers always have an up-to-date toolchain for their development. This includes:
 
@@ -48,7 +48,13 @@ If you're uncomfortable with giving blanket write permissions, you can also manu
 
 If you run into issues with the workflows defined in this repository, please [open a bug report](https://github.com/dokuwiki/github-action/issues). Please be sure to include all necessary log output.
 
-## Devel Details
+## Workflows
+
+Note these infos are mostly for developers of this repository. If you're just using the workflows, you probably don't need to read this.
+
+### matrix.yml
+
+Uses the `phpmatrix` action to create the appropriate strategy matrixes for testing against the master and stable branches. These matrixes are then used in the `test.yml` workflow.
 
 ### test.yml
 
@@ -68,9 +74,23 @@ This workflow runs rector and phpcbf to automatically fix coding style issues, P
 
 It will run on every push on branches `master`, `main` and `devel`.
 
-### GitHub Action
+## Actions
 
-The action defined in this repository will run the following steps:
+### phpmatrix
+
+This action will extract the `minphp` and `maxphp` values from the `plugin.info.txt` and match them with the PHP versions supported by the DokuWiki core. This is done for the `stable` and `master` branches of DokuWiki.
+
+It will then create a JSON string that can be used as input for the `matrix` strategy in GitHub Actions.
+
+The action will set the following outputs:
+
+- `stable_matrix`: The JSON matrix string for the `stable` branch
+- `master_matrix`: The JSON matrix string for the `master` branch
+- `minphp`: The minimum PHP version supported by the extension
+
+### dokuenv
+
+This action will run the following steps:
 
 1. Determine if your extension is a plugin or template
 2. Move your extension to the correct location in a DokuWiki installation (i.e. `lib/plugins` or `lib/tpl`)
@@ -92,5 +112,21 @@ The action is used in the reusable workflows defined in this repository.
 The action can be run locally using node 16 and the following command:
 
 ```
-INPUT_BRANCH=master node ~/path/to/github-action/index.js
+INPUT_BRANCH=master node ~/path/to/dokuenv/index.js
+```
+
+## Development
+
+When improving on the workflows or actions, you should do so in a separate branch. A test plugin can then reference this branch instead of the `main` branch of this repository.
+
+Until [this issue](https://github.com/orgs/community/discussions/66094) is not fixed, all the workflows reference actions by hardcoded repository@branch. These references need to be changed to your devel branch during development. The following command will do this for you:
+
+```
+php fixbranch.php <branch>
+```
+
+Be sure to change back the branch references to `main` before merging your changes back into the `main` branch.
+
+```
+php fixbranch.php main
 ```

@@ -2,6 +2,12 @@ name: Automatic Code Style Fixing
 
 on:
   workflow_call:
+    inputs:
+      rector-php:
+        description: 'The PHP version Rector should assume when updating code.'
+        required: true
+        type: string
+        default: '7.2'
 
 permissions:
   contents: write
@@ -27,13 +33,13 @@ jobs:
 
       - name: Create DokuWiki Environment
         id: dokuwiki-env
-        uses: splitbrain/dokuwiki-gh-action@main
+        uses: dokuwiki/github-action/.github/actions/dokuenv@main
         with:
           branch: master
 
-      - name: Run Rector
+      - name: Run Rector (PHP ${{ inputs.rector-php }})
         env:
-          RECTOR_MIN_PHP: 7.2
+          RECTOR_MIN_PHP: ${{ inputs.rector-php }}
         run: rector process --config _test/rector.php --no-diffs ${{ steps.dokuwiki-env.outputs.dir }}
 
       - name: Run PHP CodeSniffer AutoFixing

@@ -1,0 +1,29 @@
+name: Create PHP Test Matrix
+
+on:
+  workflow_call:
+    outputs:
+      stable_matrix:
+        description: 'The matrix for the stable branch'
+        value: ${{ jobs.create-matrix.outputs.stable_matrix }}
+      master_matrix:
+        description: 'The matrix for the master branch'
+        value: ${{ jobs.create-matrix.outputs.master_matrix }}
+      minphp:
+        description: 'The minimum PHP version supported'
+        value: ${{ jobs.create-matrix.outputs.minphp }}
+
+permissions: { }
+
+jobs:
+  create-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      stable_matrix: ${{ steps.matrix.outputs.stable_matrix }}
+      master_matrix: ${{ steps.matrix.outputs.master_matrix }}
+      minphp: ${{ steps.matrix.outputs.minphp }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - id: matrix
+        uses: dokuwiki/github-action/.github/actions/phpmatrix@main
