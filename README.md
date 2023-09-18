@@ -58,7 +58,9 @@ Uses the `phpmatrix` action to create the appropriate strategy matrixes for test
 
 ### test.yml
 
-This workflow executes all unit tests that have been marked with the `@group plugin_example` annotation. The PHP and DokuWiki versions to be used are supplied as JSON via input variables.
+This workflow first checks all `php` files for syntax errors, then executes all unit tests that have been marked with the `@group plugin_example` annotation.
+
+The PHP and DokuWiki versions to be used are supplied as JSON via input variables.
 
 The workflow will run on every push and on pull requests.
 
