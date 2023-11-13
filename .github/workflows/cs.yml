@@ -28,5 +28,10 @@ jobs:
         with:
           branch: master
 
+      - name: Install Composer Dependencies
+        run: |
+          cd _test
+          composer install --no-progress --no-suggest --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+
       - name: Run PHP codesniffer
         run: phpcs -q  --standard=_test/phpcs.xml ${{ steps.dokuwiki-env.outputs.dir }}

@@ -44,9 +44,16 @@ jobs:
         with:
           branch: ${{ matrix.dokuwiki-branch }}
 
+      - name: Install Composer Dependencies
+        run: |
+          cd _test
+          composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+
       - name: Setup PHPUnit
         run: |
-          php _test/fetchphpunit.php
+          if [ -f _test/fetchphpunit.php ]; then
+            php _test/fetchphpunit.php
+          fi
 
       - name: Check Syntax
         run: |
@@ -55,4 +62,8 @@ jobs:
       - name: Run PHPUnit
         run: |
           cd _test
-          php phpunit.phar --verbose --stderr --group ${{ steps.dokuwiki-env.outputs.type }}_${{ steps.dokuwiki-env.outputs.base }}
+          if [ -f phpunit.phar ]; then
+            php phpunit.phar --verbose --stderr --group ${{ steps.dokuwiki-env.outputs.type }}_${{ steps.dokuwiki-env.outputs.base }}
+          else
+            composer exec -- phpunit --verbose --stderr --group ${{ steps.dokuwiki-env.outputs.type }}_${{ steps.dokuwiki-env.outputs.base }}
+          fi

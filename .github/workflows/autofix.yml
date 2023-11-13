@@ -37,6 +37,11 @@ jobs:
         with:
           branch: master
 
+      - name: Install Composer Dependencies
+        run: |
+          cd _test
+          composer install --no-progress --no-suggest --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+
       - name: Run Rector (PHP ${{ inputs.rector-php }})
         env:
           RECTOR_MIN_PHP: ${{ inputs.rector-php }}
