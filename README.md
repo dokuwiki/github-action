@@ -50,7 +50,7 @@ If you run into issues with the workflows defined in this repository, please [op
 
 ## Workflows
 
-Note these infos are mostly for developers of this repository. If you're just using the workflows, you probably don't need to read this.
+Note this info is mostly for developers of this repository. If you're just using the workflows, you probably don't need to read this.
 
 ### matrix.yml
 
