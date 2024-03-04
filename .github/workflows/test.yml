@@ -57,7 +57,7 @@ jobs:
 
       - name: Check Syntax
         run: |
-          find ${{ steps.dokuwiki-env.outputs.dir }} -name '*.php' -print0 | xargs -0L1 php -l
+          find ${{ steps.dokuwiki-env.outputs.dir }} -name '*.php' -not -path '*/vendor/*' -print0 | xargs -0L1 php -l
 
       - name: Run PHPUnit
         run: |
