@@ -26,6 +26,6 @@ jobs:
       minphp: ${{ steps.matrix.outputs.minphp }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - id: matrix
         uses: dokuwiki/github-action/.github/actions/phpmatrix@main
