@@ -17,5 +17,5 @@ outputs:
   maxphp:
     description: 'The maximum PHP version compatible with the extension, if set. Otherwise empty.'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'index.js'

@@ -1,4 +1,5 @@
 const core = require('@actions/core');
+const yaml = require('js-yaml');
 const dwUtils = require('../dokuwikiUtils');
 
 /**
@@ -15,15 +16,30 @@ function toNumberString(num) {
     }
 }
 
-async function main() {
-    /**
-     * these are the default versions for each branch
-     * @fixme ideally we would load this from the dokuwiki repo
-     */
+/**
+ * Load the PHP versions to test against by default from the dokuwiki repo
+ *
+ * @returns {Promise<{stable: *[], master: *[]}>}
+ */
+async function fetchPHPVersions() {
     const defaults = {
-        stable: [7.2, 7.3, 7.4, 8.0, 8.1, 8.2],
-        master: [7.4, 8.0, 8.1, 8.2],
+        stable: [],
+        master: [],
     }
+
+    for (const [branch, ] of Object.entries(defaults)) {
+        const url = `https://raw.githubusercontent.com/dokuwiki/dokuwiki/${branch}/.github/workflows/testLinux.yml`
+        const response = await fetch(url);
+        const body = await response.text()
+        const doc = yaml.load(body);
+        defaults[branch] = doc.jobs.run.strategy.matrix['php-versions'];
+    }
+    console.log('Default PHP Versions:', defaults);
+    return defaults;
+}
+
+async function main() {
+    const defaults = await fetchPHPVersions();
 
     const matrix = {
         stable: {

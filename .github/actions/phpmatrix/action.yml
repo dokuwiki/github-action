@@ -8,5 +8,5 @@ outputs:
   minphp:
     description: 'The minimum PHP version supported'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'index.js'
