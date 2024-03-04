@@ -10,7 +10,13 @@ jobs:
   phpcs:
     name: PHP CodeSniffer
     runs-on: ubuntu-latest
+
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+
+    env:
+      COMPOSER: _test/composer.json
+      COMPOSER_VENDOR_DIR: _test/vendor
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,7 +26,6 @@ jobs:
         with:
           php-version: 8.2
           extensions: mbstring, intl, PDO, pdo_sqlite, bz2
-          tools: phpcs
 
       - name: Create DokuWiki Environment
         id: dokuwiki-env
@@ -29,9 +34,7 @@ jobs:
           branch: master
 
       - name: Install Composer Dependencies
-        run: |
-          cd _test
-          composer install --no-progress --no-suggest --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+        run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
       - name: Run PHP codesniffer
-        run: phpcs -q  --standard=_test/phpcs.xml ${{ steps.dokuwiki-env.outputs.dir }}
+        run: composer exec -- phpcs -q --standard=_test/phpcs.xml ${{ steps.dokuwiki-env.outputs.dir }}

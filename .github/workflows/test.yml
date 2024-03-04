@@ -19,6 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
+    env:
+      COMPOSER: _test/composer.json
+      COMPOSER_VENDOR_DIR: _test/vendor
+
     strategy:
       matrix: ${{ fromJson(inputs.matrix-json) }}
       fail-fast: false
@@ -45,25 +49,10 @@ jobs:
           branch: ${{ matrix.dokuwiki-branch }}
 
       - name: Install Composer Dependencies
-        run: |
-          cd _test
-          composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader --no-scripts
-
-      - name: Setup PHPUnit
-        run: |
-          if [ -f _test/fetchphpunit.php ]; then
-            php _test/fetchphpunit.php
-          fi
+        run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
       - name: Check Syntax
-        run: |
-          find ${{ steps.dokuwiki-env.outputs.dir }} -name '*.php' -not -path '*/vendor/*' -print0 | xargs -0L1 php -l
+        run: find ${{ steps.dokuwiki-env.outputs.dir }} -name '*.php' -not -path '*/vendor/*' -print0 | xargs -0L1 php -l
 
       - name: Run PHPUnit
-        run: |
-          cd _test
-          if [ -f phpunit.phar ]; then
-            php phpunit.phar --verbose --stderr --group ${{ steps.dokuwiki-env.outputs.type }}_${{ steps.dokuwiki-env.outputs.base }}
-          else
-            composer exec -- phpunit --verbose --stderr --group ${{ steps.dokuwiki-env.outputs.type }}_${{ steps.dokuwiki-env.outputs.base }}
-          fi
+        run: composer exec -- phpunit -c _test/phpunit.xml --verbose --stderr --group ${{ steps.dokuwiki-env.outputs.type }}_${{ steps.dokuwiki-env.outputs.base }}
