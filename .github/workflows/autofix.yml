@@ -55,7 +55,7 @@ jobs:
         run: composer exec -- phpcbf --standard=_test/phpcs.xml ${{ steps.dokuwiki-env.outputs.dir }}
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v6
         with:
           path: ${{ steps.dokuwiki-env.outputs.dir }}
           commit-message: "🤖 Automatic code style fixes"
