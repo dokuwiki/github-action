@@ -29,7 +29,7 @@ jobs:
 
       - name: Create DokuWiki Environment
         id: dokuwiki-env
-        uses: dokuwiki/github-action/.github/actions/dokuenv@main
+        uses: dokuwiki/github-action/.github/actions/dokuenv@prv6
         with:
           branch: master
 

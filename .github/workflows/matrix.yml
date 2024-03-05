@@ -28,4 +28,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - id: matrix
-        uses: dokuwiki/github-action/.github/actions/phpmatrix@main
+        uses: dokuwiki/github-action/.github/actions/phpmatrix@prv6
