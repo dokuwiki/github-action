@@ -34,6 +34,36 @@ jobs:
     uses: dokuwiki/github-action/.github/workflows/all.yml@main
 ```
 
+## Customizing the Test Environment
+
+Some extensions need additional setup before their unit tests can run: a database or other service, extra environment variables, or some custom preparation step.
+
+To make this possible without forking the workflow, the test workflow will run a `_test/pretest.sh` script from your extension if it exists. The script runs after DokuWiki and your Composer dependencies have been installed, but before PHPUnit is executed. It is run from the root of your extension (i.e. the directory containing `_test/`).
+
+Within the script you can:
+
+* **Start services** using Docker, e.g. a database. The runner host has Docker available and your tests run directly on the host, so a service started with `docker run -d -p ...` is reachable at `127.0.0.1:<port>`.
+* **Set environment variables** for the PHPUnit run by appending them to the `$GITHUB_ENV` file. Variables written there are available to the test step that follows.
+* **Run any other preparation** your tests require.
+
+Example `_test/pretest.sh` for an extension that needs a MySQL database:
+
+```bash
+#!/bin/bash
+set -e
+
+docker run -d --name db -p 3306:3306 \
+  -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=test mysql:8
+
+# expose connection info to the PHPUnit step
+echo "DB_DSN=mysql:host=127.0.0.1;dbname=test" >> "$GITHUB_ENV"
+
+# wait until the database is ready to accept connections
+until docker exec db mysqladmin ping -psecret --silent; do sleep 2; done
+```
+
+The script is run for every entry of the PHP/DokuWiki test matrix, so make sure it can be executed repeatedly.
+
 ## Permissions
 
 The workflow example given above will set very relaxed write permissions. This ensures that future updates to the workflows provided in this repository will automatically run on your extension.
@@ -58,7 +88,7 @@ Uses the `phpmatrix` action to create the appropriate strategy matrixes for test
 
 ### test.yml
 
-This workflow first checks all `php` files for syntax errors, then executes all unit tests that have been marked with the `@group plugin_example` annotation.
+This workflow first checks all `php` files for syntax errors, then runs the optional `_test/pretest.sh` hook (see [Customizing the Test Environment](#customizing-the-test-environment)) and finally executes all unit tests that have been marked with the `@group plugin_example` annotation.
 
 The PHP and DokuWiki versions to be used are supplied as JSON via input variables.
 
