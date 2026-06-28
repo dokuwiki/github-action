@@ -111,7 +111,7 @@ The action will set the following outputs:
 
 The action is used in the reusable workflows defined in this repository.
 
-The action can be run locally using node 16 and the following command:
+The action can be run locally using node 24 and the following command:
 
 ```
 INPUT_BRANCH=master node ~/path/to/dokuenv/index.js
