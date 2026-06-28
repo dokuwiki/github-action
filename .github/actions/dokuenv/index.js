@@ -19,9 +19,19 @@ function moveContents(sourceDir, destinationDir) {
         fs.mkdirSync(destinationDir, {recursive: true});
     }
 
+    const destinationResolved = path.resolve(destinationDir);
+
     for (const item of items) {
         const sourcePath = path.join(sourceDir, item);
         const destinationPath = path.join(destinationDir, item);
+
+        // never move the destination into itself - the destination may live
+        // inside the source directory (e.g. lib/plugins/<base> inside '.')
+        const sourceResolved = path.resolve(sourcePath);
+        if (destinationResolved === sourceResolved ||
+            destinationResolved.startsWith(sourceResolved + path.sep)) {
+            continue;
+        }
 
         const stats = fs.statSync(sourcePath);
 
@@ -62,7 +72,16 @@ async function main() {
     const config = dwUtils.loadExtensionInfo();
 
     console.log(`Moving plugin to ${config.dir}...`);
-    moveContents('.', config.dir);
+    // The destination (e.g. lib/plugins/<base>) lives inside the current
+    // directory. Moving the plugin there directly breaks when the plugin ships
+    // its own `lib` directory: it collides with the destination path and gets
+    // nested into itself endlessly (lib/lib/lib/...). To avoid this we first
+    // move everything into a temporary directory and only then into the final
+    // destination. See https://github.com/dokuwiki/github-action/issues/8
+    const tmpDir = fs.mkdtempSync('.dokuenv-');
+    moveContents('.', tmpDir);
+    moveContents(tmpDir, config.dir);
+    fs.rmdirSync(tmpDir);
 
     // checkout DokuWiki into current directory (no clone because dir isn't empty)
     console.log(`Cloning DokuWiki ${branch}...`);
